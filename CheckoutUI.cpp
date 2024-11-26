@@ -49,10 +49,8 @@ void PrintBasket(const BasketItems& basket)
     std::cout << "Item\tUnit Price\tQuantity\tTotal Price\tOffer\n" 
               << k_Divider;
 
-    for (const auto& [uid, itemPair] : basket) 
+    for (const auto& [item, quantity] : basket) 
     {
-        const Item& item = itemPair.first;
-        unsigned int quantity = itemPair.second;
         float totalPrice = item.price * quantity;
 
         std::cout << std::fixed << std::setprecision(2) << std::setfill('0');
@@ -70,9 +68,9 @@ void PrintDiscount(const DiscountItems& discountItems)
     std::cout << "Item\tDiscount\n" 
               << k_Divider;
 
-    for (auto item : discountItems) {
+    for (const auto& [item, discount] : discountItems) {
         std::cout << std::fixed << std::setprecision(2) << std::setfill('0');
-        std::cout << item.name << "\t-" << item.discount << " GBP\n";
+        std::cout << item.name << "\t-" << discount << " GBP\n";
     }
     std::cout << k_Divider;
 
@@ -206,13 +204,13 @@ void CheckoutUI::UIThreadFunc()
                     m_pBasketManager->AddToBasket(storeItems.at(choice-1));
                 }
 
-                const auto& basketItems = m_pBasketManager->GetBasketItems();
+                auto basketItems = m_pBasketManager->GetBasketItems();
                 if (basketItems.empty()) {
                     std::cout << "Basket is empty.\nNothing to checkout.\n";
                     break;
                 }
                 
-                const float totalPrice = m_pBasketManager->GetTotalPrice();
+                auto totalPrice = m_pBasketManager->GetTotalPrice();
                 auto totalCount = m_pBasketManager->GetTotalItemCount();
                 auto totalDiscount = m_pBasketManager->GetTotalDiscount();
                 auto discountItems = m_pBasketManager->GetDiscountItems();

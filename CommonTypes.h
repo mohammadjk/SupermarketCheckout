@@ -31,20 +31,12 @@ struct Item
     std::string     name;
     float           price;
     DiscountType    discountType;
-};
 
-struct DiscountItem
-{
-    unsigned int uid;
-    std::string name;
-    float discount;
+    bool operator<(const Item& other) const {return uid < other.uid;}
 };
 
 using ItemsList = std::vector<Item>;
-
-using BasketItem  = std::pair<Item, unsigned int>; // Pair of Item--Quantity
-using BasketItems = std::map<unsigned int, BasketItem>; // Item uid --> Besket Item
-
-using DiscountItems = std::vector<DiscountItem>;
+using BasketItems = std::map<Item, unsigned int>; // Item--->Quantity
+using DiscountItems = std::map<Item, float>; // Item--->Discount amount
 
 #endif // COMMON_TYPES_H_

@@ -23,9 +23,7 @@ public:
     unsigned int GetTotalItemCount() const;
    
     DiscountItems GetDiscountItems() const;
-    const BasketItems& GetBasketItems() const {return m_basketItems;}
-
-    void CalculateDiscount(DiscountType discountType) const;
+    BasketItems GetBasketItems() const {return m_basketItems;}
 
 private:
     BasketManager() = default;
