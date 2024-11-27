@@ -5,6 +5,7 @@
 #include "CommonTypes.h"
 
 #include <functional>
+#include <thread>
 
 class StorageManager;
 class BasketManager;
@@ -57,7 +58,9 @@ private:
 
     bool                m_isInit;
 
+    std::thread         m_uiThread;
     EventCallback       m_eventCallback;
+    
     StorageManager*     m_pStorageManager;
     BasketManager*      m_pBasketManager;
 };

@@ -2,9 +2,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include <thread>
 #include <algorithm>
-#include <functional>
 
 #include "StorageManager.h"
 #include "BasketManager.h"
@@ -143,14 +141,19 @@ bool CheckoutUI::Start()
         return false;
     }
 
-    std::thread tUI(std::bind(&CheckoutUI::UIThreadFunc, this));
-    tUI.detach();
+    // Launch the UI thread.
+    m_uiThread = std::thread{std::bind(&CheckoutUI::UIThreadFunc, this)};
 
     return true;
 }
 
 void CheckoutUI::Stop()
 {
+    // Wait for the UI to finish
+    if (m_uiThread.joinable()) {
+        std::cout << "Waiting for UI thread to finish...\n";
+        m_uiThread.join();
+    }
 }
 
 void CheckoutUI::UIThreadFunc()
@@ -237,7 +240,6 @@ void CheckoutUI::UIThreadFunc()
             break;
             
             case MenuChoice::eExit: {
-                m_eventCallback(Event{EventId::eUIClosed});
                 bFinished = true;
             } 
             break;
@@ -248,5 +250,7 @@ void CheckoutUI::UIThreadFunc()
             break;
         };
     }
+    
+    m_eventCallback(Event{EventId::eUIClosed});
     std::cout << "Thank you for using our service. Goodbye!\n";
 }
