@@ -12,9 +12,6 @@
 /** Helper functions */
 namespace
 {
-    // Flag to control the flow of the main App.
-    static bool s_IsRunning = false;
-
     /** Returns string representation of a discountType. */
     const char* EventIdToString(EventId eid) 
     {
@@ -25,36 +22,6 @@ namespace
             case EventId::eUIClosed:            return "UI Closed";
             
             default: return "Unkown";
-        };
-    }
-
-    /** Event handler */
-    void EventHandler(const Event& event)
-    {
-        std::cout << "EventReceived - EventID[" << std::to_string(event.id) << "] Event[" << EventIdToString(event.id) << "]\n";
-
-        switch(event.id)
-        {
-            case EventId::eCheckoutStarted: {
-                /** Handle event */
-            }
-            break;
-
-            case EventId::eCheckoutCompleted: {
-                /** Handle event */
-                BasketManager::GetInstance().Reset();
-            }
-            break;
-
-            case EventId::eUIClosed: {
-                s_IsRunning = false;            
-            }
-            break;
-
-            default: 
-            {
-            }
-            break;
         };
     }
 }
@@ -79,12 +46,12 @@ bool CheckoutSystem::Init()
 void CheckoutSystem::Run()
 {    
     /** Launch UI */
-    if (!(s_IsRunning = CheckoutUI::GetInstance().Start())) {
+    if (!(m_isRunning = CheckoutUI::GetInstance().Start())) {
         std::cerr << "Failed to start the UI\n";
         return;
     }
     
-    while (s_IsRunning) {
+    while (m_isRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
     
@@ -117,10 +84,39 @@ bool CheckoutSystem::InitUI()
     CheckoutUI::GetInstance().RegisterBasketManager(&BasketManager::GetInstance());
     
     /** Register an event handler for UI events */
-    CheckoutUI::GetInstance().RegisterEventHandler(EventHandler);
+    CheckoutUI::GetInstance().RegisterEventHandler(std::bind(&CheckoutSystem::EventHandler, this, std::placeholders::_1));
 
     return true;
 }
 
+ /** Event handler */
+void CheckoutSystem::EventHandler(const Event& event)
+{
+    std::cout << "EventReceived - EventID[" << std::to_string(event.id) << "] Event[" << EventIdToString(event.id) << "]\n";
+
+    switch(event.id)
+    {
+        case EventId::eCheckoutStarted: {
+            /** Handle event */
+        }
+        break;
+
+        case EventId::eCheckoutCompleted: {
+            /** Handle event */
+            BasketManager::GetInstance().Reset();
+        }
+        break;
+
+        case EventId::eUIClosed: {
+            m_isRunning = false;
+        }
+        break;
+
+        default: 
+        {
+        }
+        break;
+    };
+}
 
 

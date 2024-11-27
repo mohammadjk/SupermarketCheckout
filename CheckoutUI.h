@@ -4,12 +4,14 @@
 #include "NonCopyable.h" 
 #include "CommonTypes.h"
 
+#include <functional>
+
 class StorageManager;
 class BasketManager;
 
 class CheckoutUI : NonCopyable
 {
-    using EventCallback = void(*)(const Event& event);
+    using EventCallback = std::function<void(const Event& event)>;
 
 public:
     struct Config
