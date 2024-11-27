@@ -83,7 +83,7 @@ DiscountItems BasketManager::GetDiscountItems() const
         } 
         else if (item.discountType == DiscountType::eBuy3CheapestFree) {
             // This discount type assumes that quantities of the same item contribute to discount eligibility.
-            groupDiscountList.push_back(item);
+            groupDiscountList.insert(groupDiscountList.end(), quantity, item);
         }
     }
 
@@ -95,7 +95,7 @@ DiscountItems BasketManager::GetDiscountItems() const
     unsigned int count = groupDiscountList.size() / 3;
 
     std::for_each(groupDiscountList.cbegin(), groupDiscountList.cbegin()+count, 
-        [&discountItems](const Item& item){discountItems[item] = item.price;});
+        [&discountItems](const Item& item){discountItems[item] += item.price;});
     
     return discountItems;
 }
