@@ -3,10 +3,14 @@
 
 #include "CommonTypes.h"
 
+class BasketManagerIF;
+class StorageManagerIF;
+class CheckoutUI;
+
 class CheckoutSystem
 {
 public:
-    CheckoutSystem() : m_isRunning(false) {}
+    CheckoutSystem();
 
     bool Init();
     void Run();
@@ -19,6 +23,10 @@ private:
     bool InitUI();
 
     bool m_isRunning;
+
+    BasketManagerIF*    m_pBasketManagerIF;
+    StorageManagerIF*   m_pStorageManagerIF;
+    CheckoutUI*         m_pUI;  
 };
 
 #endif //CHECKOUT_SYSTEM_H_

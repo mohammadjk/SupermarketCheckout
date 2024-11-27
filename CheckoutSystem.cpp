@@ -26,6 +26,22 @@ namespace
     }
 }
 
+CheckoutSystem::CheckoutSystem() 
+    : m_isRunning(false)
+    , m_pBasketManagerIF(&BasketManager::GetInstance())
+    , m_pStorageManagerIF(&StorageManager::GetInstance()) 
+    , m_pUI(&CheckoutUI::GetInstance())
+{
+    /** Register a StorageManager with UI */
+    m_pUI->RegisterStorageManager(m_pStorageManagerIF);
+
+    /** Register a BasketManager with UI */
+    m_pUI->RegisterBasketManager(m_pBasketManagerIF);
+    
+    /** Register an event handler for UI events */
+    m_pUI->RegisterEventHandler(std::bind(&CheckoutSystem::EventHandler, this, std::placeholders::_1));
+}
+
 /** App initialisation. */
 bool CheckoutSystem::Init() 
 {    
@@ -46,7 +62,7 @@ bool CheckoutSystem::Init()
 void CheckoutSystem::Run()
 {    
     /** Launch UI */
-    if (!(m_isRunning = CheckoutUI::GetInstance().Start())) {
+    if (!(m_isRunning = m_pUI->Start())) {
         std::cerr << "Failed to start the UI\n";
         return;
     }
@@ -55,38 +71,11 @@ void CheckoutSystem::Run()
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
     
-    CheckoutUI::GetInstance().Stop();
+    m_pUI->Stop();
 }
 
 void CheckoutSystem::Close()
 {
-}
-
-// Private interface
-
-bool CheckoutSystem::InitStorageManager()
-{
-    StorageManager::Config dbCfg;
-    return StorageManager::GetInstance().Init(dbCfg);
-}
-
-bool CheckoutSystem::InitUI()
-{
-    CheckoutUI::Config uiCfg;
-    if (!CheckoutUI::GetInstance().Init(uiCfg)) {
-        return false;
-    }
-
-    /** Register a StorageManager with UI */
-    CheckoutUI::GetInstance().RegisterStorageManager(&StorageManager::GetInstance());
-
-    /** Register a BasketManager with UI */
-    CheckoutUI::GetInstance().RegisterBasketManager(&BasketManager::GetInstance());
-    
-    /** Register an event handler for UI events */
-    CheckoutUI::GetInstance().RegisterEventHandler(std::bind(&CheckoutSystem::EventHandler, this, std::placeholders::_1));
-
-    return true;
 }
 
  /** Event handler */
@@ -103,7 +92,7 @@ void CheckoutSystem::EventHandler(const Event& event)
 
         case EventId::eCheckoutCompleted: {
             /** Handle event */
-            BasketManager::GetInstance().Reset();
+            m_pBasketManagerIF->Reset();
         }
         break;
 
@@ -117,6 +106,20 @@ void CheckoutSystem::EventHandler(const Event& event)
         }
         break;
     };
+}
+
+// Private interface
+
+bool CheckoutSystem::InitStorageManager()
+{
+    StorageManager::Config dbCfg;
+    return m_pStorageManagerIF->Init(dbCfg);
+}
+
+bool CheckoutSystem::InitUI()
+{
+    CheckoutUI::Config uiCfg;
+    return m_pUI->Init(uiCfg);
 }
 
 

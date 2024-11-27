@@ -4,8 +4,8 @@
 #include <iomanip>
 #include <algorithm>
 
-#include "StorageManager.h"
-#include "BasketManager.h"
+#include "StorageManagerIF.h"
+#include "BasketManagerIF.h"
 
 
 /** Helper functions */
@@ -131,13 +131,13 @@ bool CheckoutUI::Start()
         return false;
     }
 
-    if (!m_pStorageManager) {
-        std::cerr << "StorageManager not registered.\n";
+    if (!m_pBasketManager) {
+        std::cerr << "BasketManager not registered.\n";
         return false;
     }
 
-    if (!m_pBasketManager) {
-        std::cerr << "BasketManager not registered.\n";
+    if (!m_pStorageManager) {
+        std::cerr << "StorageManager not registered.\n";
         return false;
     }
 

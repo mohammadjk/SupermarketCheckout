@@ -2,28 +2,26 @@
 #define BASKET_MANAGER_H_
 
 #include "NonCopyable.h"
-#include "CommonTypes.h"
+#include "BasketManagerIF.h"
 
-class BasketManager : NonCopyable
+class BasketManager : public BasketManagerIF, NonCopyable 
 {
 public:
     static BasketManager& GetInstance();
 
-    ~BasketManager() {}
+    ~BasketManager() override = default;
 
-    void Start();
-    void Stop();
-
-    void Reset();
+    void Start() override;
+    void Stop() override;
+    void Reset() override;
     
-    void AddToBasket(Item pItem);
+    void AddToBasket(Item pItem) override;
 
-    float GetTotalPrice() const;
-    float GetTotalDiscount() const;
-    unsigned int GetTotalItemCount() const;
-   
-    DiscountItems GetDiscountItems() const;
-    BasketItems GetBasketItems() const {return m_basketItems;}
+    float GetTotalPrice() const override;
+    float GetTotalDiscount() const override;
+    unsigned int GetTotalItemCount() const override;
+    DiscountItems GetDiscountItems() const override;
+    BasketItems GetBasketItems() const override {return m_basketItems;}
 
 private:
     BasketManager() = default;

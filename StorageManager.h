@@ -3,30 +3,24 @@
 
 #include "NonCopyable.h"
 #include "CommonTypes.h"
+#include "StorageManagerIF.h"
 
 /** 
  * Singleton class - It provides an interface into a permanent storage.
  */
-class StorageManager : NonCopyable
+class StorageManager : public StorageManagerIF, NonCopyable
 {
     using DBHandle = void*;
 public:
-    struct Config
-    {
-        std::string dbPath;
-        /** Other configs */
-    };
-
-public:
     /** Factory function */
     static StorageManager& GetInstance();
-    ~StorageManager();
+    ~StorageManager() override = default;
 
     /** Initialises the StorageManager using a config. */
-    bool Init(const StorageManager::Config& cfg);
+    bool Init(const StorageManager::Config& cfg) override;
 
-    inline bool IsInit() const { return m_isInit; } 
-    inline const ItemsList& GetStoreItemsList() const {return m_storeItems;}
+    inline bool IsInit() const override { return m_isInit; } 
+    inline const ItemsList& GetStoreItemsList() const override {return m_storeItems;}
 
 private:
     /** Hide C'tor from outside. */

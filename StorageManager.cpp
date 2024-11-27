@@ -5,10 +5,6 @@ StorageManager& StorageManager::GetInstance() {
     return storageMngr;
 }
 
-StorageManager::~StorageManager() 
-{
-}
-
 bool StorageManager::Init(const StorageManager::Config& cfg) 
 {
     /** Configure StorageManager using the cfg provided. */

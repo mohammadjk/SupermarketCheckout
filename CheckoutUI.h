@@ -7,8 +7,8 @@
 #include <functional>
 #include <thread>
 
-class StorageManager;
-class BasketManager;
+class StorageManagerIF;
+class BasketManagerIF;
 
 class CheckoutUI : NonCopyable
 {
@@ -37,11 +37,11 @@ public:
     /** Stops the UI thread. */
     void Stop();
 
-    /** Register a StorageManager with the UI. */
-    void RegisterStorageManager(StorageManager* storageManager) {m_pStorageManager = storageManager;}
-
     /** Register a BasketManager with the UI. */
-    void RegisterBasketManager(BasketManager* basketManager) {m_pBasketManager = basketManager;}
+    void RegisterBasketManager(BasketManagerIF* basketManager) {m_pBasketManager = basketManager;}
+
+    /** Register a StorageManager with the UI. */
+    void RegisterStorageManager(StorageManagerIF* storageManager) {m_pStorageManager = storageManager;}
 
     /** Register a callback to send UI events to the main app to be handled. */
     void RegisterEventHandler(EventCallback callback) {m_eventCallback = std::move(callback);}
@@ -61,8 +61,8 @@ private:
     std::thread         m_uiThread;
     EventCallback       m_eventCallback;
     
-    StorageManager*     m_pStorageManager;
-    BasketManager*      m_pBasketManager;
+    BasketManagerIF*    m_pBasketManager;
+    StorageManagerIF*   m_pStorageManager;
 };
 
 #endif // CHECKOUT_UI_H_
